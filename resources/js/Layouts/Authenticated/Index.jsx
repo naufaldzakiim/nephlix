@@ -2,16 +2,16 @@ import React from "react";
 import Sidebar from "@/Layouts/Authenticated/Sidebar";
 import Topbar from "@/Layouts/Authenticated/Topbar";
 
-export default function Authenticated({ user, children }) {
+export default function Authenticated({ auth, user, children }) {
     return (
         <>
             <div className="mx-auto max-w-screen hidden lg:block">
-                <Sidebar/>
+                <Sidebar auth={auth}/>
 
                 {/* START: Content */}
                 <div className="ml-[300px] px-[50px]">
                     <div className="py-10 flex flex-col gap-[50px]">
-                        <Topbar user={user}/>
+                        <Topbar user={auth.user}/>
                         <main>{children}</main>
                     </div>
                 </div>
