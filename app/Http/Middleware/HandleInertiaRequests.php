@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -22,6 +24,25 @@ class HandleInertiaRequests extends Middleware
         return parent::version($request);
     }
 
+    private function activePlan()
+    {
+        $activePlan = Auth::user() ? Auth::user()->LastActiveUserSubscription : null;
+
+        if (!$activePlan) {
+            return null;
+        }
+
+        $lastDay = Carbon::parse($activePlan->updated_at)->addMonths($activePlan->subscriptionPlan->active_period_in_months);
+        $activeDays = Carbon::parse($activePlan->updated_at)->diffInDays($lastDay);
+        $remainingActiveDays = (int) Carbon::parse($activePlan->expired_date)->diffInDays(Carbon::now(), true);
+
+        return [
+            'name' => $activePlan->subscriptionPlan->name,
+            'activeDays' => $activeDays,
+            'remainingActiveDays' => $remainingActiveDays,
+        ];
+    }
+
     /**
      * Define the props that are shared by default.
      *
@@ -33,7 +54,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'activePlan' => $this->activePlan(),
             ],
         ];
     }
+
+    
 }
