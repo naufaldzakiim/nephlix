@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "@/Layouts/Authenticated/Sidebar";
 import Topbar from "@/Layouts/Authenticated/Topbar";
 
-export default function Authenticated({ auth, user, children }) {
+export default function Authenticated({ auth, children }) {
     return (
         <>
             <div className="mx-auto max-w-screen hidden lg:block">
