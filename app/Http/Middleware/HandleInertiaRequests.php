@@ -56,6 +56,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'activePlan' => $this->activePlan(),
             ],
+            'flashMessage' => [
+                'message' => $request->session()->get('message'),
+                'type' => $request->session()->get('type'),
+            ]
         ];
     }
 
