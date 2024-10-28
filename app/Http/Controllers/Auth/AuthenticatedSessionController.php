@@ -32,6 +32,12 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        /** @var \App\Models\User */
+        $user = Auth::user();
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin.dashboard.movie.index');
+        }
 
         return redirect()->route('user.dashboard.index');
     }
