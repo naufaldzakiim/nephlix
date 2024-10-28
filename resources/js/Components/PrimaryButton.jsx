@@ -26,7 +26,7 @@ export default function PrimaryButton({
         <button
             {...props}
             type={type}
-            className={`rounded-2xl py-[13px] text-center w-full ${
+            className={`rounded-2xl py-[13px] text-center ${
                 disabled && "opacity-30"
             } btn-${variant} ${className}`}
             disabled={disabled}

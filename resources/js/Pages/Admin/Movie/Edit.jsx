@@ -5,16 +5,11 @@ import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 import Checkbox from "@/Components/Checkbox";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, router } from "@inertiajs/react";
 
-export default function Create({ auth }) {
-    const { data, setData, post, processing, errors } = useForm({
-        name: "",
-        category: "",
-        video_url: "",
-        thumbnail: "",
-        rating: "",
-        is_featured: false,
+export default function Edit({ auth, movie }) {
+    const { data, setData, processing, errors } = useForm({
+        ...movie,
     });
 
     const onHandleChange = (e) => {
@@ -27,13 +22,20 @@ export default function Create({ auth }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("admin.dashboard.movie.store"));
+        if (data.thumbnail === movie.thumbnail) {
+            delete data.thumbnail;
+        }
+
+        router.visit(route("admin.dashboard.movie.update", movie.id), {
+            method: "put",
+            data: data,
+        });
     };
 
     return (
         <Authenticated auth={auth}>
-            <Head title="Admin - Create Movie" />
-            <h1 className="text-xl">Insert a new Movie</h1>
+            <Head title="Admin - Update Movie" />
+            <h1 className="text-xl">Update Movie: {movie.name}</h1>
             <hr className="mb-4" />
             <form onSubmit={submit}>
                 <div className="flex flex-col gap-6">
@@ -42,6 +44,7 @@ export default function Create({ auth }) {
                         <TextInput
                             type="text"
                             name="name"
+                            defaultValue={movie.name}
                             placeholder="Enter the name of the movie"
                             variant="primary-outline"
                             handleChange={onHandleChange}
@@ -54,6 +57,7 @@ export default function Create({ auth }) {
                         <TextInput
                             type="text"
                             name="category"
+                            defaultValue={movie.category}
                             placeholder="Enter the category of the movie"
                             variant="primary-outline"
                             handleChange={onHandleChange}
@@ -66,6 +70,7 @@ export default function Create({ auth }) {
                         <TextInput
                             type="url"
                             name="video_url"
+                            defaultValue={movie.video_url}
                             placeholder="Enter the video url of the movie"
                             variant="primary-outline"
                             handleChange={onHandleChange}
@@ -75,6 +80,7 @@ export default function Create({ auth }) {
                     </div>
                     <div>
                         <InputLabel htmlFor="thumbnail" value="Thumbnail" />
+                        <img src={`/storage/${movie.thumbnail}`} alt="" className="w-40"/>
                         <TextInput
                             type="file"
                             name="thumbnail"
@@ -90,6 +96,7 @@ export default function Create({ auth }) {
                         <TextInput
                             type="number"
                             name="rating"
+                            defaultValue={movie.rating}
                             placeholder="Enter the rating of the movie"
                             variant="primary-outline"
                             handleChange={onHandleChange}
@@ -107,6 +114,7 @@ export default function Create({ auth }) {
                             variant="primary"
                             isError={errors.is_featured}
                             className="mb-2"
+                            defaultChecked={movie.is_featured}
                         />
                         <InputError message={errors.is_featured} className="mt-2" />
                     </div>
